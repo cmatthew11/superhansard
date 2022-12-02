@@ -27,6 +27,7 @@ def get_soup(url):
     return soup
 
 def match_names(string):
+    
     """returns all the indexes from the mps df whose names are in the string"""
     out = []
     for i in mps.name:
@@ -40,7 +41,8 @@ def match_names(string):
                     out.append(k)
     return out
 
-def get_speech(soup):
+def get_speech(soup): 
+    """takes soup of a debate page and returns who said what in a df"""
     header = soup.h3.text
     divs = soup.find_all("div",{"class":"col-sm-12 mt-2 mb-2"})
     if len(divs)==0:
@@ -59,14 +61,13 @@ def get_speech(soup):
     return pd.DataFrame(out)
 
 def convert_date(date):
-    # date = date.strfttime("%y-%m-%d")
+    """gets date in the format needed for url"""
     day = str(date.day)
     month = str(date.month)
     year = str(date.year)
     date = year+"-"+month+"-"+day
     return date
-    
-    
+
 
 mps = pd.read_csv('mps- parallelparliament.csv',
                   index_col = 0)
@@ -84,20 +85,21 @@ cols = ["mp_ind","date","speech","debate","name"]
 
 #%%
 
-# df = pd.DataFrame(columns = cols)
-df = pd.read_pickle(r'what_mps_say.pickle')
+df = pd.DataFrame(columns = cols)
+# df = pd.read_pickle(r'what_mps_say.pickle')
 
-for date in pd.date_range("2022-01-01","2022-12-01"):
-    if date.day==1:
-        df.to_pickle("what_mps_say.pickle")
+start_date = "2022-01-01"
+end_date = "2022-07-01"
+# date format is y-d-m
+for date in pd.date_range(start_date,end_date):
+    # if date.day==1:
+    #     df.to_pickle("what_mps_say.pickle")
     date = convert_date(date)
     if date not in df.date:
         print(date)
         url = base_url + '/debate/' + date
         soup = get_soup(url)
         urls = [base_url + i["href"] for i in soup.find_all("a",text="Read Full debate")]
-        
-        # urls = ['https://www.parallelparliament.co.uk/debate/2022-11-25/commons/commons-chamber/carbon-emissions-buildings-bill']
         for url in urls:
             soup = get_soup(url)
             speech = get_speech(soup)
