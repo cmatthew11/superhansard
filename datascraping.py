@@ -202,3 +202,4 @@ for cluster in df.cluster.value_counts()[0:50].index:
    print("Cluster Label: {}, Items in Cluster: {}".format(cluster,count))
    print(feature_array[tfidf_sorting][:n])
 
+WHAT ABOUT EXCTRACTING KEYWORDS (NOUNS PLACES THINGS ETC) to compare with APPG topic keywords (maybe extracted from GOOGLE)
